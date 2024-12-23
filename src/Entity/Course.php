@@ -6,6 +6,8 @@ use App\Repository\CourseRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
 class Course
@@ -16,18 +18,26 @@ class Course
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $title = null;
 
     #[ORM\Column(length: 1000, nullable: true)]
+    #[Assert\Length(max: 255)]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[NotBlank]
+    #[Assert\Length(max: 255)]
+    #[Assert\Unique]
+
     private ?string $code = null;
 
     /**
      * @var Collection<int, Lesson>
      */
-    #[ORM\OneToMany(targetEntity: Lesson::class, mappedBy: 'course_id')]
+    #[ORM\OneToMany(targetEntity: "App\Entity\Lesson", mappedBy: 'course_id')]
+    #[ORM\OrderBy(['number' => 'ASC'])]
     private Collection $lessons;
 
     public function __construct()

@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\LessonRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 #[ORM\Entity(repositoryClass: LessonRepository::class)]
 class Lesson
@@ -15,16 +17,22 @@ class Lesson
     private ?int $id = null;
 
     #[ORM\ManyToOne(inversedBy: 'lessons')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(name: 'course_id_id', referencedColumnName: 'id', nullable: false)]
     private ?Course $course_id = null;
 
     #[ORM\Column(length: 255)]
+    #[NotBlank]
+    #[Assert\Length(max: 255)]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
+    #[NotBlank]
     private ?string $text = null;
 
     #[ORM\Column]
+    #[Assert\NotBlank]
+    #[Assert\LessThan(1000)]
+
     private ?int $number = null;
 
     public function getId(): ?int
