@@ -30,7 +30,8 @@ final class LessonController extends AbstractController
         $lesson = new Lesson();
         $form = $this->createForm(LessonType::class, $lesson);
         $form->handleRequest($request);
-        $lesson->setCourseId($entityManager->getRepository(Course::class)->find($request->get('course_id')));
+        $currentCourse = $entityManager->getRepository(Course::class)->find($request->get('course_id'));
+        $lesson->setCourseId($currentCourse);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->persist($lesson);

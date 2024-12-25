@@ -3,15 +3,27 @@
 {% block title %}{{ lesson.title }}{% endblock %}
 
 {% block body %}
-    <h1>{{ lesson.title }}</h1>
+    <div class="row">
+        <div class="col">
+            <h1>{{ lesson.title }}</h1>
 
-    <div>Курс <a href="{{ path('app_course_show', {'id': course.id}) }}">{{ course.title }}</a></div>
+            <div>Курс <a href="{{ path('app_course_show', {'id': course.id}) }}"
+                         class="text-decoration-none">{{ course.title }}</a></div>
 
-    <br>
-    <a href="{{ path('app_lesson_edit', {'id': lesson.id}) }}">Редактировать</a>
+            <br>
+            <form method="post" action="{{ path('app_lesson_delete', {'id': lesson.id}) }}"
+                  onsubmit="return confirm('Are you sure you want to delete this item?');">
+                <a href="{{ path('app_lesson_edit', {'id': lesson.id}) }}" class="btn btn-outline-secondary">Редактировать</a>
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ lesson.id) }}">
+                <button class="btn btn-outline-danger">Удалить</button>
+            </form>
 
-    {{ include('lesson/_delete_form.html.twig') }}
 
+        </div>
+    </div>
+    <hr>
+    <div class="row">
+        <div class="p-3 border border-1">{{ lesson.text }}</div>
 
-    <p>{{ lesson.text }}</p>
+    </div>
 {% endblock %}

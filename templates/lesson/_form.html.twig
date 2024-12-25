@@ -1,4 +1,18 @@
 {{ form_start(form) }}
-    {{ form_widget(form) }}
-    <button class="btn">{{ button_label|default('Save') }}</button>
+<div class="mb-6">
+    {{ form_label(form.title, 'Название', {'label_attr': {'class': 'form-label'}})}}
+    {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+    {{ form_errors(form.title) }}
+
+</div><div class="mb-6">
+    {{ form_label(form.text, 'Текст', {'label_attr': {'class': 'form-label'}})}}
+    {{ form_widget(form.text, {'attr': {'class': 'form-control'}}) }}
+    {{ form_errors(form.text) }}
+
+</div><div class="mb-6">
+    {{ form_label(form.number, 'Номер', {'label_attr': {'class': 'form-label'}})}}
+    {{ form_widget(form.number, {'attr': {'class': 'form-control'}}) }}
+    {{ form_errors(form.number) }}
+</div>
+    <button class="btn btn-primary mt-3">{{ button_label|default('Сохранить') }}</button>
 {{ form_end(form) }}
