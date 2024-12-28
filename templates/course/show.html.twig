@@ -5,15 +5,15 @@
 {% block body %}
     <div class="row">
         <div class="col">
-            <h1>{{ course.title }}</h1>
+            <h1 class="course-title">{{ course.title }}</h1>
 
-            <p>{{ course.description }}</p>
+            <p class="course-description">{{ course.description }}</p>
 
             <h2>Уроки</h2>
 
             {% for key, lesson in lessons %}
 
-                <div>{{ key+1 }}. <a href="{{ path('app_lesson_show', {'id': lesson.id}) }}"  class="text-decoration-none">{{ lesson.title }}</a>
+                <div>{{ key+1 }}. <a href="{{ path('app_lesson_show', {'id': lesson.id}) }}"  class="text-decoration-none lesson-link">{{ lesson.title }}</a>
                 </div>
             {% endfor %}
 
@@ -21,11 +21,11 @@
             <form method="post" action="{{ path('app_course_delete', {'id': course.id}) }}"
                   onsubmit="return confirm('Are you sure you want to delete this item?');">
                 <a href="{{ path('app_course_index') }}" class="btn btn-outline-secondary">К списку курсов</a>
-                <a href="{{ path('app_course_edit', {'id': course.id}) }}" class="btn btn-outline-secondary">Редактировать
+                <a href="{{ path('app_course_edit', {'id': course.id}) }}" class="btn btn-outline-secondary course-edit">Редактировать
                     курс</a>
                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ course.id) }}">
-                <button class="btn btn-outline-danger">Удалить</button>
-                <a href="{{ path('app_lesson_new', {'course_id': course.id}) }}" class="btn btn-outline-secondary">Добавить
+                <button class="btn btn-outline-danger course-delete">Удалить</button>
+                <a href="{{ path('app_lesson_new', {'course_id': course.id}) }}" class="btn btn-outline-secondary course-new-lesson">Добавить
                     урок</a>
             </form>
 

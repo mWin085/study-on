@@ -7,7 +7,7 @@
         <h1>Курсы</h1>
 
         {% for course in courses %}
-            <div class="col-md-6 mb-4">
+            <div class="col-md-6 mb-4 course-container">
 
                 <div class="mb-4 h-100 p-5 bg-light border rounded-3">
                     <h2>{{ course.title }}</h2>
@@ -18,7 +18,7 @@
         {% endfor %}
 
         <hr>
-        <h2><a href="{{ path('app_course_new') }}" class="btn btn-primary" type="button">Новый курс</a></h2>
+        <h2><a href="{{ path('app_course_new') }}" class="btn btn-primary course-new" type="button">Новый курс</a></h2>
     </div>
 
 {% endblock %}
