@@ -50,6 +50,7 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
 
                 $user = new User();
                 $user->setApiToken($response['token']);
+                $user->setRefreshToken($response['refresh_token']);
                 return $user;
             }),
             //new CustomCredentials($checkUser, $credentials['email']),

@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Exception\BillingUnavailableException;
 use App\Form\RegisterType;
 use App\Security\AppCustomAuthenticator;
 use App\Security\User;
@@ -56,12 +57,14 @@ class SecurityController extends AbstractController
                     'username' => $form->get('email')->getData(),
                     'password' => $form->get('password')->getData()
                 ]));
-                if ($result['error']) {
+
+                if (isset($result['error'])) {
                     throw new CustomUserMessageAuthenticationException($result['error']);
                 }
 
                 $user->setApiToken($result['token']);
-            } catch (CustomUserMessageAuthenticationException $e) {
+                $user->setRefreshToken($result['refreshToken']);
+            } catch (BillingUnavailableException $e) {
                 return $this->render('security/register.html.twig', [
                     'registrationForm' => $form->createView(),
                     'error' => $e->getMessage(),
@@ -85,13 +88,12 @@ class SecurityController extends AbstractController
     {
 
         $user = $this->getUser();
-
         try {
             if (!$user){
                 return $this->redirectToRoute('app_course_index');
             }
             $response = $this->billingClient->profile($user->getApiToken());
-        } catch (\Exception $e) {
+        } catch (BillingUnavailableException $e) {
             return $this->redirectToRoute('app_course_index');
         }
 

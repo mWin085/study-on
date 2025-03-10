@@ -9,7 +9,28 @@
         {% for course in courses %}
             <div class="col-md-6 mb-4 course-container">
 
+
                 <div class="mb-4 h-100 p-5 bg-light border rounded-3">
+                    {% if is_granted('ROLE_USER') %}
+                        {% if courseTypes[course.code]['type'] == 'free' %}
+                            <div class="mb-4">
+                                <h4 class="text-bg-success">Бесплатно</h4>
+                            </div>
+
+                        {% elseif courseTypes[course.code]['type'] == 'rent' %}
+                            {% if transactions[course.code] is defined %}
+                                <div class="mb-4">
+                                    <h4 class="text-bg-success">Курс арендован до {{ transactions[course.code]['expires_at']|date('d.m.Y') }}</h4>
+                                </div>
+                            {% endif %}
+                        {% elseif courseTypes[course.code]['type'] == 'bye' %}
+                            {% if transactions[course.code] is defined %}
+                                <div class="mb-4">
+                                    <h4 class="text-bg-success">Курс куплен</h4>
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
                     <h2>{{ course.title }}</h2>
                     <p>{{ course.description }}</p>
                     <a href="{{ path('app_course_show', {'id': course.id}) }}" class="btn btn-outline-secondary" type="button">Пройти</a>

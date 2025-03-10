@@ -5,6 +5,115 @@
 {% block body %}
     <div class="row">
         <div class="col">
+            {% for message in app.flashes('success') %}
+                <div class="alert alert-success">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger">
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            {% if is_granted('ROLE_USER') %}
+                {% if courseType['type'] == 'free' %}
+                    <div class="mb-4">
+                        <h4 class="text-bg-success">Бесплатно</h4>
+                    </div>
+
+                {% elseif courseType['type'] == 'rent' %}
+                    <div class="mb-4">
+                        <h4 class="text-bg-success">Стоимость курса {{ courseType['price'] }} руб.
+                            в месяц</h4>
+                    </div>
+                    {% if transactions is empty and available%}
+                        <div class="mb-4">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                Арендовать
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Купить курс</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Отмена
+                                            </button>
+
+                                            <form method="post" action="{{ path('app_course_bye', {'id': course.id}) }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('bye' ~ course.id) }}">
+                                                <button class="btn btn-outline-danger course-bye">Ок</button>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elseif transactions %}
+                        <div class="mb-4">
+                            <h4 class="text-bg-success">Арендовано
+                                до {{ transactions[0]['expires_at']|date('d.m.Y') }}</h4>
+                        </div>
+                    {% endif %}
+                {% elseif courseType['type'] == 'bye' %}
+                    <div class="mb-4">
+                        <h4 class="text-bg-success">Стоимость курса {{ courseType['price'] }}
+                            руб.</h4>
+                    </div>
+                    {% if transactions is empty and available%}
+                        <div class="mb-4">
+                            <!-- Button trigger modal -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#exampleModal">
+                                Купит
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                                 aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Купить курс</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Отмена
+                                            </button>
+
+                                            <form method="post" action="{{ path('app_course_bye', {'id': course.id}) }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('bye' ~ course.id) }}">
+                                                <button class="btn btn-outline-danger course-bye">Ок</button>
+                                            </form>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% elseif transactions %}
+                        <div class="mb-4">
+                            <h4 class="text-bg-success">Куплено</h4>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+
+
             <h1 class="course-title">{{ course.title }}</h1>
 
             <p class="course-description">{{ course.description }}</p>
@@ -13,21 +122,26 @@
 
             {% for key, lesson in lessons %}
 
-                <div>{{ key+1 }}. <a href="{{ path('app_lesson_show', {'id': lesson.id}) }}"  class="text-decoration-none lesson-link">{{ lesson.title }}</a>
+                <div>{{ key+1 }}. <a href="{{ path('app_lesson_show', {'id': lesson.id}) }}"
+                                     class="text-decoration-none lesson-link">{{ lesson.title }}</a>
                 </div>
             {% endfor %}
 
             <hr>
-            <form method="post" action="{{ path('app_course_delete', {'id': course.id}) }}"
-                  onsubmit="return confirm('Are you sure you want to delete this item?');">
-                <a href="{{ path('app_course_index') }}" class="btn btn-outline-secondary">К списку курсов</a>
-                <a href="{{ path('app_course_edit', {'id': course.id}) }}" class="btn btn-outline-secondary course-edit">Редактировать
-                    курс</a>
-                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ course.id) }}">
-                <button class="btn btn-outline-danger course-delete">Удалить</button>
-                <a href="{{ path('app_lesson_new', {'course_id': course.id}) }}" class="btn btn-outline-secondary course-new-lesson">Добавить
-                    урок</a>
-            </form>
+            <a href="{{ path('app_course_index') }}" class="btn btn-outline-secondary">К списку курсов</a>
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                <form method="post" action="{{ path('app_course_delete', {'id': course.id}) }}"
+                      onsubmit="return confirm('Are you sure you want to delete this item?');">
+                    <a href="{{ path('app_course_edit', {'id': course.id}) }}"
+                       class="btn btn-outline-secondary course-edit">Редактировать
+                        курс</a>
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ course.id) }}">
+                    <button class="btn btn-outline-danger course-delete">Удалить</button>
+                    <a href="{{ path('app_lesson_new', {'course_id': course.id}) }}"
+                       class="btn btn-outline-secondary course-new-lesson">Добавить
+                        урок</a>
+                </form>
+            {% endif %}
 
         </div>
     </div>

@@ -2,6 +2,10 @@
 
 namespace App\Security;
 
+use App\Exception\BillingUnavailableException;
+use App\Service\BillingClient;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -11,6 +15,11 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 
 class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
+
+    public function __construct(BillingClient $billingClient)
+    {
+        $this->billingClient = $billingClient;
+    }
     /**
      * Symfony calls this method if you use features like switch_user
      * or remember_me.
@@ -55,6 +64,17 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
     {
         if (!$user instanceof User) {
             throw new UnsupportedUserException(sprintf('Invalid user class "%s".', $user::class));
+        }
+
+        $payload = $user->decodePayload();
+        if ($payload['exp']  < time()){
+            try {
+                $response = $this->billingClient->refresh($user->getRefreshToken());
+                $user->setRefreshToken($response['refresh_token']);
+                $user->setApiToken($response['token']);
+            } catch (BillingUnavailableException $e){
+                throw new CustomUserMessageAuthenticationException($e->getMessage());
+            }
         }
 
         return $user;

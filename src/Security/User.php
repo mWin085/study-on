@@ -14,6 +14,7 @@ class User implements UserInterface
     private $roles = [];
 
     private $apiToken;
+    private $refreshToken;
 
     public function getEmail(): ?string
     {
@@ -89,5 +90,27 @@ class User implements UserInterface
     public function getPassword(): ?string
     {
         return null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRefreshToken()
+    {
+        return $this->refreshToken;
+    }
+
+    /**
+     * @param mixed $refreshToken
+     */
+    public function setRefreshToken($refreshToken): void
+    {
+        $this->refreshToken = $refreshToken;
+    }
+
+    public function decodePayload()
+    {
+        return json_decode(base64_decode(explode('.', $this->getApiToken())[1]), true);
+
     }
 }

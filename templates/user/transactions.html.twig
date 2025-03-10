@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Транзакции{% endblock %}
+
+{% block body %}
+
+    <h1>Транзакции</h1>
+
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Дата</th>
+            <th>Сумма</th>
+            <th>Тип</th>
+            <th>Курс</th>
+            <th>Дата аренды</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for transaction in transactions %}
+            <tr>
+                <td>{{ transaction.createdAt|date('d.m.Y H:i') }}</td>
+                <td>{{ transaction.amount }}</td>
+                <td>{{ transaction.type }}</td>
+                <td>
+                    {% if courseIds[transaction.code] is defined %}
+                        <a href="{{ path('app_course_show', {'id': courseIds[transaction.code]}) }}">Ссылка</a></td>
+                    {% endif %}
+                <td>
+                    {{ (transaction.expires_at is defined) ? transaction.expires_at|date('d.m.Y')  : '' }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endblock %}
