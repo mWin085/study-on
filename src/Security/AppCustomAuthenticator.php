@@ -2,6 +2,7 @@
 
 namespace App\Security;
 
+use App\Exception\BillingUnavailableException;
 use App\Service\BillingClient;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -44,13 +45,27 @@ class AppCustomAuthenticator extends AbstractLoginFormAuthenticator
             new UserBadge($credentials, function ($credentials) {
                 $response = $this->billingClient->authenticate($credentials);
 
-                if(!$response) {
+                if(isset($response['code']) && $response['code'] == Response::HTTP_UNAUTHORIZED) {
                     throw new CustomUserMessageAuthenticationException('Invalid credentials.');
                 }
 
                 $user = new User();
                 $user->setApiToken($response['token']);
                 $user->setRefreshToken($response['refresh_token']);
+
+                $payload = $user->decodePayload();
+
+                try {
+                    $response = $this->billingClient->refresh($user->getRefreshToken());
+                    $user->setRefreshToken($response['refresh_token']);
+                    $user->setApiToken($response['token']);
+                    $user->setEmail($payload['username']);
+                    $user->setRoles($payload['roles']);
+
+                } catch (BillingUnavailableException $e){
+                    throw new CustomUserMessageAuthenticationException($e->getMessage());
+                }
+
                 return $user;
             }),
             //new CustomCredentials($checkUser, $credentials['email']),

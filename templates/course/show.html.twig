@@ -51,9 +51,9 @@
                                                 Отмена
                                             </button>
 
-                                            <form method="post" action="{{ path('app_course_bye', {'id': course.id}) }}">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('bye' ~ course.id) }}">
-                                                <button class="btn btn-outline-danger course-bye">Ок</button>
+                                            <form method="post" action="{{ path('app_course_buy', {'id': course.id}) }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('buy' ~ course.id) }}">
+                                                <button class="btn btn-outline-danger course-buy">Ок</button>
                                             </form>
 
                                         </div>
@@ -67,7 +67,7 @@
                                 до {{ transactions[0]['expires_at']|date('d.m.Y') }}</h4>
                         </div>
                     {% endif %}
-                {% elseif courseType['type'] == 'bye' %}
+                {% elseif courseType['type'] == 'buy' %}
                     <div class="mb-4">
                         <h4 class="text-bg-success">Стоимость курса {{ courseType['price'] }}
                             руб.</h4>
@@ -95,9 +95,9 @@
                                                 Отмена
                                             </button>
 
-                                            <form method="post" action="{{ path('app_course_bye', {'id': course.id}) }}">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('bye' ~ course.id) }}">
-                                                <button class="btn btn-outline-danger course-bye">Ок</button>
+                                            <form method="post" action="{{ path('app_course_buy', {'id': course.id}) }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('buy' ~ course.id) }}">
+                                                <button class="btn btn-outline-danger course-buy">Ок</button>
                                             </form>
 
                                         </div>

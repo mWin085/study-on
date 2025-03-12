@@ -67,11 +67,15 @@ class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
         }
 
         $payload = $user->decodePayload();
-        if ($payload['exp']  < time()){
+
+        if ($payload['exp']  < time()+60){
             try {
                 $response = $this->billingClient->refresh($user->getRefreshToken());
                 $user->setRefreshToken($response['refresh_token']);
                 $user->setApiToken($response['token']);
+                $user->setEmail($payload['username']);
+                $user->setRoles($payload['roles']);
+
             } catch (BillingUnavailableException $e){
                 throw new CustomUserMessageAuthenticationException($e->getMessage());
             }

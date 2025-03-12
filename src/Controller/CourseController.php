@@ -8,6 +8,7 @@ use App\Repository\CourseRepository;
 use App\Service\BillingClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -74,11 +75,26 @@ final class CourseController extends AbstractController
         $form = $this->createForm(CourseType::class, $course);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->persist($course);
-            $entityManager->flush();
 
-            return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $user = $this->getUser();
+            $courseData = $request->get('course');
+            $credentials = json_encode([
+                'code' => $courseData['code'],
+                'title' => $courseData['title'],
+                'type' => $courseData['type'],
+                'price' => $courseData['price'],
+            ]);
+            $response = $this->billingClient->addCourse($credentials, $user->getApiToken());
+
+            if ($response['success']){
+                $entityManager->persist($course);
+                $entityManager->flush();
+
+                return $this->redirectToRoute('app_course_index', [], Response::HTTP_SEE_OTHER);
+            } else {
+                $form->addError(new FormError($response['error']));
+            }
         }
 
         return $this->render('course/new.html.twig', [
@@ -144,12 +160,39 @@ final class CourseController extends AbstractController
     public function edit(Request $request, Course $course, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(CourseType::class, $course);
+        try {
+
+            $response = $this->billingClient->getCourse($course->getCode());
+            if ($response){
+                $form->get('type')->setData($response['type']);
+                $form->get('price')->setData($response['price']);
+            }
+
+        } catch (\Exception $exception) {
+
+        }
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
 
-            return $this->redirectToRoute('app_course_show', ['id' => $course->getId()], Response::HTTP_SEE_OTHER);
+            $user = $this->getUser();
+            $courseData = $request->get('course');
+            $credentials = json_encode([
+                'code' => $courseData['code'],
+                'title' => $courseData['title'],
+                'type' => $courseData['type'],
+                'price' => $courseData['price'],
+            ]);
+            $response = $this->billingClient->editCourse($credentials, $user->getApiToken(), $course->getId());
+
+            if ($response['success']){
+                $entityManager->flush();
+
+                return $this->redirectToRoute('app_course_show', ['id' => $course->getId()], Response::HTTP_SEE_OTHER);
+            } else {
+                $form->addError(new FormError($response['error']));
+            }
         }
 
         return $this->render('course/edit.html.twig', [
@@ -171,11 +214,11 @@ final class CourseController extends AbstractController
     }
 
     #[IsGranted('ROLE_USER')]
-    #[Route('/bye/{id}', name: 'app_course_bye', methods: ['POST'])]
+    #[Route('/buy/{id}', name: 'app_course_buy', methods: ['POST'])]
     public function courseBuy(Request $request, Course $course, ): Response
     {
         $user = $this->getUser();
-        if ($this->isCsrfTokenValid('bye'.$course->getId(), $request->getPayload()->getString('_token'))) {
+        if ($this->isCsrfTokenValid('buy'.$course->getId(), $request->getPayload()->getString('_token'))) {
             try {
                 $response = $this->billingClient->buyCourse($user->getApiToken(), $course->getCode());
                 if ($response['code'] == Response::HTTP_OK && $response['success']){

@@ -1,5 +1,10 @@
 <div class="col-6">
 {{ form_start(form) }}
+    {% if  form_errors(form) %}
+    <div class="my-custom-class-for-errors alert alert-danger">
+        {{ form_errors(form) }}
+    </div>
+    {% endif %}
     <div class="mb-6">
         {{ form_label(form.title, 'Название', {'label_attr': {'class': 'form-label'}})}}
         {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
@@ -14,6 +19,16 @@
         {{ form_label(form.code, 'Код', {'label_attr': {'class': 'form-label'}})}}
         {{ form_widget(form.code, {'attr': {'class': 'form-control'}}) }}
         {{ form_errors(form.code) }}
+    </div>
+    <div class="mb-6">
+        {{ form_label(form.type, 'Тип', {'label_attr': {'class': 'form-label'}})}}
+        {{ form_widget(form.type, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.type) }}
+    </div>
+    <div class="mb-6">
+        {{ form_label(form.price, 'Цена', {'label_attr': {'class': 'form-label'}})}}
+        {{ form_widget(form.price, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.price) }}
     </div>
     <button class="btn btn-primary mt-3">{{ button_label|default('Сохранить') }}</button>
 {{ form_end(form) }}

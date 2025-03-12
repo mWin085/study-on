@@ -109,4 +109,18 @@ class BillingClient
         return $head;
     }
 
+    public function addCourse(string $credentials, string $apiToken)
+    {
+        $head = $this->getResponse("/api/v1/courses", true, $credentials, $apiToken);
+
+        return json_decode($head, true);
+    }
+
+    public function editCourse(string $credentials, string $apiToken, string $code)
+    {
+        $head = $this->getResponse("/api/v1/courses/$code", true, $credentials, $apiToken);
+
+        return json_decode($head, true);
+    }
+
 }

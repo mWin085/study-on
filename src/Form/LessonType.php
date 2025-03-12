@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class LessonType extends AbstractType
 {
@@ -24,9 +25,27 @@ class LessonType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title', TextType::class)
-            ->add('text', TextareaType::class)
-            ->add('number', NumberType::class)
+            ->add('title', TextType::class, [
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Поле Название обязательно к заполнению',
+                    ]),
+                ],
+            ])
+            ->add('text', TextareaType::class, [
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Поле Текст обязательно к заполнению',
+                    ]),
+                ],
+            ])
+            ->add('number', NumberType::class, [
+                'constraints' => [
+                    new NotBlank([
+                        'message' => 'Поле Номер обязательно к заполнению',
+                    ]),
+                ],
+            ])
             ->add('course_id', HiddenType::class)
         ;
 

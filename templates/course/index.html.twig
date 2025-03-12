@@ -23,7 +23,7 @@
                                     <h4 class="text-bg-success">Курс арендован до {{ transactions[course.code]['expires_at']|date('d.m.Y') }}</h4>
                                 </div>
                             {% endif %}
-                        {% elseif courseTypes[course.code]['type'] == 'bye' %}
+                        {% elseif courseTypes[course.code]['type'] == 'buy' %}
                             {% if transactions[course.code] is defined %}
                                 <div class="mb-4">
                                     <h4 class="text-bg-success">Курс куплен</h4>
@@ -39,7 +39,9 @@
         {% endfor %}
 
         <hr>
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
         <h2><a href="{{ path('app_course_new') }}" class="btn btn-primary course-new" type="button">Новый курс</a></h2>
+        {% endif %}
     </div>
 
 {% endblock %}
