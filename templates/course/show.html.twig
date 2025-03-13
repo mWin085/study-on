@@ -25,8 +25,7 @@
 
                 {% elseif courseType['type'] == 'rent' %}
                     <div class="mb-4">
-                        <h4 class="text-bg-success">Стоимость курса {{ courseType['price'] }} руб.
-                            в месяц</h4>
+                        <h4 class="text-bg-success">Стоимость аренды {{ courseType['price'] }} руб.</h4>
                     </div>
                     {% if transactions is empty and available%}
                         <div class="mb-4">
