@@ -118,7 +118,7 @@ final class CourseController extends AbstractController
         try {
             if ($user = $this->getUser()) {
                 $response = $this->billingClient->profile($user->getApiToken());
-                if ($response['code'] == 201){
+                if ($response['code'] == 200){
                     if ($response['balance'] > $courseType['price']) {
                         $available = true;
                     }
@@ -184,12 +184,12 @@ final class CourseController extends AbstractController
                 'type' => $courseData['type'],
                 'price' => $courseData['price'],
             ]);
-            $response = $this->billingClient->editCourse($credentials, $user->getApiToken(), $course->getId());
+            $response = $this->billingClient->editCourse($credentials, $user->getApiToken(), $course->getCode());
 
             if ($response['success']){
                 $entityManager->flush();
 
-                return $this->redirectToRoute('app_course_show', ['id' => $course->getId()], Response::HTTP_SEE_OTHER);
+                return $this->redirectToRoute('app_course_show', ['id' => $course->getId()]);
             } else {
                 $form->addError(new FormError($response['error']));
             }

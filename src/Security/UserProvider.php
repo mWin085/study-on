@@ -16,6 +16,8 @@ use Symfony\Component\Security\Core\User\UserProviderInterface;
 class UserProvider implements UserProviderInterface, PasswordUpgraderInterface
 {
 
+    private BillingClient $billingClient;
+
     public function __construct(BillingClient $billingClient)
     {
         $this->billingClient = $billingClient;

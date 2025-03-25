@@ -8,6 +8,7 @@ use App\Security\AppCustomAuthenticator;
 use App\Security\User;
 use App\Service\BillingClient;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -27,10 +28,6 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
-
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
         // last username entered by the user
@@ -64,21 +61,19 @@ class SecurityController extends AbstractController
 
                 $user->setApiToken($result['token']);
                 $user->setRefreshToken($result['refreshToken']);
-            } catch (BillingUnavailableException $e) {
-                return $this->render('security/register.html.twig', [
-                    'registrationForm' => $form->createView(),
-                    'error' => $e->getMessage(),
-                ]);
+                return $authenticator->authenticateUser(
+                    $user,
+                    $formAuthenticator,
+                    $request
+                );
+            } catch (CustomUserMessageAuthenticationException $e) {
+                $form->addError(new FormError($e->getMessage()));
             }
-            return $authenticator->authenticateUser(
-                $user,
-                $formAuthenticator,
-                $request);
+
         }
 
         return $this->render('security/register.html.twig', [
-            'registrationForm' => $form->createView(),
-            'error' => false
+            'registrationForm' => $form
         ]);
         //..
     }
@@ -97,7 +92,7 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('app_course_index');
         }
 
-        if ($response['code'] != 201) {
+        if ($response['code'] != 200) {
             return $this->redirectToRoute('app_course_index');
         }
 

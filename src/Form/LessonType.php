@@ -18,6 +18,8 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 class LessonType extends AbstractType
 {
 
+    private EntityManagerInterface $entityManager;
+
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;

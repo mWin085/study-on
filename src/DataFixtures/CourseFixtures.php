@@ -12,7 +12,6 @@ class CourseFixtures extends Fixture
     public function load(ObjectManager $manager): void
     {
         $course = new Course();
-        $lesson = new Lesson();
 
         $course->setTitle('Древняя Греция: от мифов к демократии');
         $course->setDescription('Курс погрузит вас в мир античной Греции, от мифологических истоков до расцвета демократии. Вы познакомитесь с ключевыми событиями, философскими идеями и культурными достижениями этой цивилизации.');

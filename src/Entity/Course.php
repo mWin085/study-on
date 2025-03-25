@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CourseRepository::class)]
-#[UniqueEntity('code')]
+#[UniqueEntity('code', message: 'Код уже используется')]
 class Course
 {
     #[ORM\Id]

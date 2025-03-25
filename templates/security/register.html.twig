@@ -4,19 +4,21 @@
 
 {% block body %}
 
-        <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>
-            {{ form_start(registrationForm) }}
-            {% if error %}
-                <div class="alert alert-danger">{{ error }}</div>
-            {% endif %}
-            {{ form_row(registrationForm.email) }}
-            {{ form_errors(registrationForm.email) }}
+    <h1 class="h3 mb-3 font-weight-normal">Регистрация</h1>
+    {{ form_start(registrationForm) }}
+    {% if  form_errors(registrationForm) %}
+        <div class="my-custom-class-for-errors alert alert-danger">
+            {{ form_errors(registrationForm) }}
+        </div>
+    {% endif %}
+    {{ form_row(registrationForm.email) }}
+    {{ form_errors(registrationForm.email) }}
 
-            {{ form_row(registrationForm.password.first) }}
-            {{ form_errors(registrationForm.password.first) }}
+    {{ form_row(registrationForm.password.first) }}
+    {{ form_errors(registrationForm.password.first) }}
 
-            {{ form_row(registrationForm.password.second) }}
-            {{ form_errors(registrationForm.password.second) }}
+    {{ form_row(registrationForm.password.second) }}
+    {{ form_errors(registrationForm.password.second) }}
 
     <div class="pt-2">
         <button type="submit" class="btn btn-lg btn-primary">
@@ -24,5 +26,5 @@
         </button>
     </div>
 
-            {{ form_end(registrationForm) }}
+    {{ form_end(registrationForm) }}
 {% endblock %}

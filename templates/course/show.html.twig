@@ -17,31 +17,32 @@
                 </div>
             {% endfor %}
 
-            {% if is_granted('ROLE_USER') %}
-                {% if courseType['type'] == 'free' %}
-                    <div class="mb-4">
-                        <h4 class="text-bg-success">Бесплатно</h4>
-                    </div>
+            {% if courseType['type'] == 'free' %}
+                <div class="mb-4">
+                    <h4 class="text-bg-success free-type">Бесплатно</h4>
+                </div>
 
-                {% elseif courseType['type'] == 'rent' %}
-                    <div class="mb-4">
-                        <h4 class="text-bg-success">Стоимость аренды {{ courseType['price'] }} руб.</h4>
-                    </div>
-                    {% if transactions is empty and available%}
+            {% elseif courseType['type'] == 'rent' %}
+                <div class="mb-4">
+                    <h4 class="text-bg-success rent-type">Стоимость аренды {{ courseType['price'] }} руб.</h4>
+                </div>
+                {% if is_granted('ROLE_USER') %}
+                    {% if transactions is empty and available %}
                         <div class="mb-4">
                             <!-- Button trigger modal -->
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
+                                    data-bs-target="#coursePayment">
                                 Арендовать
                             </button>
 
                             <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            <div class="modal fade" id="coursePayment" tabindex="-1"
+                                 aria-labelledby="coursePaymentLabel"
                                  aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Купить курс</h1>
+                                            <h1 class="modal-title fs-5" id="coursePaymentLabel">Купить курс</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                         </div>
@@ -50,8 +51,10 @@
                                                 Отмена
                                             </button>
 
-                                            <form method="post" action="{{ path('app_course_buy', {'id': course.id}) }}">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('buy' ~ course.id) }}">
+                                            <form method="post"
+                                                  action="{{ path('app_course_buy', {'id': course.id}) }}">
+                                                <input type="hidden" name="_token"
+                                                       value="{{ csrf_token('buy' ~ course.id) }}">
                                                 <button class="btn btn-outline-danger course-buy">Ок</button>
                                             </form>
 
@@ -62,30 +65,33 @@
                         </div>
                     {% elseif transactions %}
                         <div class="mb-4">
-                            <h4 class="text-bg-success">Арендовано
+                            <h4 class="text-bg-success rent-data">Арендовано
                                 до {{ transactions[0]['expires_at']|date('d.m.Y') }}</h4>
                         </div>
                     {% endif %}
-                {% elseif courseType['type'] == 'buy' %}
-                    <div class="mb-4">
-                        <h4 class="text-bg-success">Стоимость курса {{ courseType['price'] }}
-                            руб.</h4>
-                    </div>
-                    {% if transactions is empty and available%}
+                {% endif %}
+            {% elseif courseType['type'] == 'buy' %}
+                <div class="mb-4">
+                    <h4 class="text-bg-success buy-type">Стоимость курса {{ courseType['price'] }}
+                        руб.</h4>
+                </div>
+                {% if is_granted('ROLE_USER') %}
+                    {% if transactions is empty and available %}
                         <div class="mb-4">
                             <!-- Button trigger modal -->
                             <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                    data-bs-target="#exampleModal">
-                                Купит
+                                    data-bs-target="#coursePayment">
+                                Купить
                             </button>
 
                             <!-- Modal -->
-                            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            <div class="modal fade" id="coursePayment" tabindex="-1"
+                                 aria-labelledby="coursePaymentLabel"
                                  aria-hidden="true">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
                                         <div class="modal-header">
-                                            <h1 class="modal-title fs-5" id="exampleModalLabel">Купить курс</h1>
+                                            <h1 class="modal-title fs-5" id="coursePaymentLabel">Купить курс</h1>
                                             <button type="button" class="btn-close" data-bs-dismiss="modal"
                                                     aria-label="Close"></button>
                                         </div>
@@ -94,8 +100,10 @@
                                                 Отмена
                                             </button>
 
-                                            <form method="post" action="{{ path('app_course_buy', {'id': course.id}) }}">
-                                                <input type="hidden" name="_token" value="{{ csrf_token('buy' ~ course.id) }}">
+                                            <form method="post"
+                                                  action="{{ path('app_course_buy', {'id': course.id}) }}">
+                                                <input type="hidden" name="_token"
+                                                       value="{{ csrf_token('buy' ~ course.id) }}">
                                                 <button class="btn btn-outline-danger course-buy">Ок</button>
                                             </form>
 
@@ -106,7 +114,7 @@
                         </div>
                     {% elseif transactions %}
                         <div class="mb-4">
-                            <h4 class="text-bg-success">Куплено</h4>
+                            <h4 class="text-bg-success buy-data">Куплено</h4>
                         </div>
                     {% endif %}
                 {% endif %}

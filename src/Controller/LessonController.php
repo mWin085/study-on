@@ -62,24 +62,26 @@ final class LessonController extends AbstractController
     #[Route('/{id}', name: 'app_lesson_show', methods: ['GET'])]
     public function show(Lesson $lesson): Response
     {
-        $transactions = false;
         if ($user = $this->getUser()){
-
             try {
-                $transactions = $this->billingClient->transactions($user->getApiToken(),
-                    [
-                        'course_code' => $lesson->getCourseId()->getCode(),
-                        'skip_expired' => true,
-                        'type' => 'payment',
-                    ]
-                );
-
-
+                $course = $this->billingClient->getCourse($lesson->getCourseId()->getCode());
+                if ($course['type'] !== 'free'){
+                    $transactions = $this->billingClient->transactions($user->getApiToken(),
+                        [
+                            'course_code' => $lesson->getCourseId()->getCode(),
+                            'skip_expired' => true,
+                            'type' => 'payment',
+                        ]
+                    );
+                    if (!$transactions) {
+                        throw new AccessDeniedException('Курс не оплачен');
+                    }
+                }
             } catch (\Exception $exception) {
+                $this->addFlash('error', $exception->getMessage());
+                return $this->redirectToRoute('app_course_show', ['id' => $lesson->getCourseId()->getId()], Response::HTTP_SEE_OTHER);
             }
-            if (!$transactions) {
-                throw new AccessDeniedException('Курс не оплачен');
-            }
+
         }
         return $this->render('lesson/show.html.twig', [
             'lesson' => $lesson,

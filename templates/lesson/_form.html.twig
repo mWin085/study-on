@@ -2,17 +2,29 @@
 <div class="mb-6">
     {{ form_label(form.title, 'Название', {'label_attr': {'class': 'form-label'}})}}
     {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
-    {{ form_errors(form.title) }}
+    {% if  form_errors(form.title) %}
+        <div class="alert alert-danger">
+            {{ form_errors(form.title) }}
+        </div>
+    {% endif %}
 
 </div><div class="mb-6">
     {{ form_label(form.text, 'Текст', {'label_attr': {'class': 'form-label'}})}}
     {{ form_widget(form.text, {'attr': {'class': 'form-control'}}) }}
-    {{ form_errors(form.text) }}
+    {% if  form_errors(form.text) %}
+        <div class="alert alert-danger">
+            {{ form_errors(form.text) }}
+        </div>
+    {% endif %}
 
 </div><div class="mb-6">
     {{ form_label(form.number, 'Номер', {'label_attr': {'class': 'form-label'}})}}
     {{ form_widget(form.number, {'attr': {'class': 'form-control'}}) }}
-    {{ form_errors(form.number) }}
+    {% if  form_errors(form.number) %}
+        <div class="alert alert-danger">
+            {{ form_errors(form.number) }}
+        </div>
+    {% endif %}
 </div>
     <button class="btn btn-primary mt-3">{{ button_label|default('Сохранить') }}</button>
 {{ form_end(form) }}
