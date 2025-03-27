@@ -14,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
 
 class LessonType extends AbstractType
 {
@@ -24,6 +25,7 @@ class LessonType extends AbstractType
     {
         $this->entityManager = $entityManager;
     }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -42,14 +44,14 @@ class LessonType extends AbstractType
                 ],
             ])
             ->add('number', NumberType::class, [
+                'invalid_message' => 'Введите целое число',
                 'constraints' => [
                     new NotBlank([
                         'message' => 'Поле Номер обязательно к заполнению',
                     ]),
                 ],
             ])
-            ->add('course_id', HiddenType::class)
-        ;
+            ->add('course_id', HiddenType::class);
 
         $builder->get('course_id')
             ->addModelTransformer(new \CourseTransformer($this->entityManager));

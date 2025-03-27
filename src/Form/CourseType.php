@@ -39,6 +39,7 @@ class CourseType extends AbstractType
                 ],
             ])
             ->add('price', NumberType::class, [
+                'invalid_message' => 'Введите целое число',
                 'mapped' => false,
                 'required' => false
             ])

@@ -22,7 +22,7 @@ class Lesson
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, maxMessage: 'Длина текста не должна превышать 255 символов')]
     private ?string $title = null;
 
     #[ORM\Column(type: Types::TEXT)]
@@ -31,7 +31,7 @@ class Lesson
 
     #[ORM\Column]
     #[Assert\NotBlank]
-    #[Assert\LessThan(1000)]
+    #[Assert\LessThan(10000, message: 'Введите число не более 10000')]
 
     private ?int $number = null;
 

@@ -21,16 +21,16 @@ class Course
 
     #[ORM\Column(length: 255)]
     #[NotBlank]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, maxMessage: 'Длина текста не должна превышать 255 символов')]
     private ?string $title = null;
 
     #[ORM\Column(length: 1000, nullable: true)]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 1000, maxMessage: 'Длина текста не должна превышать 1000 символов')]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, unique: true)]
     #[NotBlank]
-    #[Assert\Length(max: 255)]
+    #[Assert\Length(max: 255, maxMessage: 'Длина текста не должна превышать 255 символов')]
 
     private ?string $code = null;
 

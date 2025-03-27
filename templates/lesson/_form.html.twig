@@ -3,7 +3,7 @@
     {{ form_label(form.title, 'Название', {'label_attr': {'class': 'form-label'}})}}
     {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
     {% if  form_errors(form.title) %}
-        <div class="alert alert-danger">
+        <div class="text-danger">
             {{ form_errors(form.title) }}
         </div>
     {% endif %}
@@ -12,7 +12,7 @@
     {{ form_label(form.text, 'Текст', {'label_attr': {'class': 'form-label'}})}}
     {{ form_widget(form.text, {'attr': {'class': 'form-control'}}) }}
     {% if  form_errors(form.text) %}
-        <div class="alert alert-danger">
+        <div class="text-danger">
             {{ form_errors(form.text) }}
         </div>
     {% endif %}
@@ -21,7 +21,7 @@
     {{ form_label(form.number, 'Номер', {'label_attr': {'class': 'form-label'}})}}
     {{ form_widget(form.number, {'attr': {'class': 'form-control'}}) }}
     {% if  form_errors(form.number) %}
-        <div class="alert alert-danger">
+        <div class="text-danger">
             {{ form_errors(form.number) }}
         </div>
     {% endif %}
